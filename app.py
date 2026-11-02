@@ -37,6 +37,7 @@ from graficos import (  # noqa: E402
     CONFIG,
     MONEDA,
     SUFIJO_MONEDA,
+    aplicar_modo_oscuro,
     etiqueta_mes,
     grafico_barras_horizontales,
     grafico_evolucion_mensual,
@@ -177,8 +178,11 @@ st.markdown(
     /* Valores comunes a todas las tarjetas: mismo borde, radio y espaciado */
     :root {
         --radio: 12px;
-        --borde: 1px solid #e1e0d9;
+        --color-borde: #e1e0d9;
+        --borde: 1px solid var(--color-borde);
         --hueco: 1rem;
+        --fondo-tarjeta: #ffffff;
+        --fondo-suave: #f0efec;
         --texto: #0b0b0b;
         --texto-2: #52514e;
         --texto-3: #898781;
@@ -187,17 +191,20 @@ st.markdown(
     h1, h2, h3 { letter-spacing: -0.01em; }
 
     /* Contenedores con borde de Streamlit (filtros y gráficos) */
-    [data-testid="stVerticalBlockBorderWrapper"],
+    [data-testid="stVerticalBlock"],
     [data-testid="stExpander"] details { border-radius: var(--radio) !important; }
 
     /* En móvil, los botones de los filtros pasan a la línea siguiente en vez de desplazarse */
     [data-testid="stButtonGroup"] > div { flex-wrap: wrap; overflow-x: visible; row-gap: 0.4rem; }
 
     /* ---- Cabecera ---- */
+    /* Interruptor del modo oscuro, alineado a la derecha de la etiqueta superior */
+    .st-key-modo_oscuro { width: fit-content; margin-left: auto; }
+    .st-key-modo_oscuro p { font-size: 0.82rem; color: var(--texto-2); }
     .cabecera {
         display: flex; flex-wrap: wrap; align-items: flex-end;
         justify-content: space-between; gap: 0.75rem 2rem;
-        margin-bottom: 1.25rem;
+        margin: -0.6rem 0 1.25rem 0;
     }
     .encabezado-etiqueta {
         font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em;
@@ -211,7 +218,7 @@ st.markdown(
     .aviso-demo {
         display: flex; gap: 0.5rem; align-items: flex-start;
         max-width: 24rem; font-size: 0.78rem; line-height: 1.4; color: var(--texto-2);
-        background: #ffffff; border: var(--borde); border-radius: var(--radio);
+        background: var(--fondo-tarjeta); border: var(--borde); border-radius: var(--radio);
         padding: 0.55rem 0.8rem;
     }
     .aviso-demo b { color: var(--texto); font-weight: 600; }
@@ -237,7 +244,7 @@ st.markdown(
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }
     .kpi {
-        background: #ffffff; border: var(--borde); border-radius: var(--radio);
+        background: var(--fondo-tarjeta); border: var(--borde); border-radius: var(--radio);
     }
     .kpi { padding: 1rem 1.25rem; }
     .kpi-etiqueta {
@@ -293,7 +300,7 @@ st.markdown(
     }
 
     .nota-datos {
-        font-size: 0.82rem; color: var(--texto-2); background: #f0efec;
+        font-size: 0.82rem; color: var(--texto-2); background: var(--fondo-suave);
         border-radius: var(--radio); padding: 0.75rem 1rem; margin-top: var(--hueco); line-height: 1.5;
     }
     .pie {
@@ -305,6 +312,61 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+
+# Modo oscuro: se activa con el interruptor de la cabecera. Redefine las variables
+# de color que usan todas las tarjetas y adapta los controles de Streamlit.
+ESTILO_OSCURO = """
+<style>
+:root {
+    --texto: #ececea; --texto-2: #b9b8b3; --texto-3: #8f8e89; --azul: #4f93ec;
+    --color-borde: #2e3138; --fondo-tarjeta: #1c1f24; --fondo-suave: #23262c;
+    color-scheme: dark;
+}
+.insight {
+    --acento: #6aa6f5; --acento-texto: #8dbcf8; --fondo-acento: #18212d;
+    --borde-acento: #2a3a50; --chip: #22324a;
+}
+.aviso-icono { background: rgba(79,147,236,0.18); }
+
+/* Fondo y texto de la página */
+[data-testid="stApp"] { background: #121418 !important; }
+[data-testid="stApp"], [data-testid="stMarkdownContainer"],
+[data-testid="stWidgetLabel"] p, [data-testid="stExpander"] summary { color: var(--texto); }
+
+/* Contenedores con borde (filtros y gráficos) y desplegable de la tabla */
+[data-testid="stVerticalBlock"] { border-color: var(--color-borde) !important; }
+[data-testid="stExpander"] details { border-color: var(--color-borde) !important; }
+[data-testid="stExpander"] summary { background: var(--fondo-tarjeta) !important; }
+[data-testid="stExpander"] summary:hover { color: var(--azul); }
+[data-testid="stExpanderDetails"] { background: transparent !important; border-color: var(--color-borde) !important; }
+
+/* La tabla se dibuja en un <canvas> con los colores del tema claro: se invierte
+   (con giro de tono para conservar los azules) para integrarla en el modo oscuro */
+[data-testid="stDataFrame"] { filter: invert(0.9) hue-rotate(180deg); }
+
+/* Pastillas, control segmentado y botón: sin seleccionar / seleccionados */
+[data-testid="stButtonGroup"] button, [data-testid="stBaseButton-secondary"] {
+    background: var(--fondo-tarjeta) !important; color: var(--texto) !important;
+    border-color: var(--color-borde) !important;
+}
+[data-testid="stButtonGroup"] button[data-selected="true"] {
+    background: rgba(79,147,236,0.16) !important; color: var(--azul) !important;
+    border-color: var(--azul) !important;
+}
+[data-testid="stBaseButton-secondary"]:hover { border-color: var(--azul) !important; color: var(--azul) !important; }
+
+/* Selector de periodo */
+[data-testid="stSliderThumbValue"], [data-testid="stSliderTickBar"] { color: var(--azul) !important; }
+</style>
+"""
+
+
+def mostrar_grafico(fig):
+    """Muestra una figura Plotly, adaptada al modo oscuro si está activo."""
+    if st.session_state.get("modo_oscuro"):
+        aplicar_modo_oscuro(fig)
+    st.plotly_chart(fig, config=CONFIG, width="stretch")
 
 
 def titulo_grafico(titulo, subtitulo):
@@ -367,11 +429,19 @@ mes_incompleto = ultimo_mes if fecha_max < ultimo_mes.end_time.normalize() else 
 # Encabezado
 # ---------------------------------------------------------------------------
 
+col_etiqueta, col_modo = st.columns([4, 1], vertical_alignment="center")
+with col_etiqueta:
+    st.markdown('<div class="encabezado-etiqueta">Análisis de ventas · E-commerce</div>',
+                unsafe_allow_html=True)
+with col_modo:
+    modo_oscuro = st.toggle(":material/dark_mode: Modo oscuro", key="modo_oscuro")
+if modo_oscuro:
+    st.markdown(ESTILO_OSCURO, unsafe_allow_html=True)
+
 st.markdown(
     f"""
     <div class="cabecera">
         <div>
-            <div class="encabezado-etiqueta">Análisis de ventas · E-commerce</div>
             <div class="encabezado-titulo">Ventas del marketplace 2024</div>
             <div class="encabezado-sub">
                 {formato_numero(len(datos), 0)} transacciones entre el
@@ -491,10 +561,7 @@ with col_mes:
             subtitulo += (f" · {etiqueta_mes(mes_incompleto)} solo incluye datos hasta el día "
                           f"{fecha_max.day}")
         titulo_grafico("Evolución mensual", subtitulo)
-        st.plotly_chart(
-            grafico_evolucion_mensual(mensual, dias, mes_incompleto, alto=400),
-            config=CONFIG, width="stretch",
-        )
+        mostrar_grafico(grafico_evolucion_mensual(mensual, dias, mes_incompleto, alto=400))
 
 with col_region:
     with st.container(border=True):
@@ -502,13 +569,10 @@ with col_region:
         cuotas_region = (por_region / por_region.sum()).map(
             lambda c: f"<br>Peso: {formato_porcentaje(c)}"
         )
-        st.plotly_chart(
-            grafico_barras_horizontales(
-                por_region, 400, ",.2f", "Ingresos", info_extra=cuotas_region,
-                sufijo=SUFIJO_MONEDA,
-            ),
-            config=CONFIG, width="stretch",
-        )
+        mostrar_grafico(grafico_barras_horizontales(
+            por_region, 400, ",.2f", "Ingresos", info_extra=cuotas_region,
+            sufijo=SUFIJO_MONEDA,
+        ))
 
 col_cat, col_top = st.columns(2, gap="medium")
 
@@ -530,7 +594,7 @@ with col_cat:
                 por_categoria, 360, ",.2f", "Ingresos", info_extra=extra,
                 sufijo=SUFIJO_MONEDA,
             )
-        st.plotly_chart(fig_categoria, config=CONFIG, width="stretch")
+        mostrar_grafico(fig_categoria)
 
 with col_top:
     with st.container(border=True):
@@ -539,13 +603,10 @@ with col_top:
             df.drop_duplicates("Product Name").set_index("Product Name")["Product Category"]
             .map(lambda c: f"<br>Categoría: {en_espanol(c)}")
         )
-        st.plotly_chart(
-            grafico_barras_horizontales(
-                top_productos, 412, ",.2f", "Ingresos", info_extra=categoria_producto,
-                sufijo=SUFIJO_MONEDA,
-            ),
-            config=CONFIG, width="stretch",
-        )
+        mostrar_grafico(grafico_barras_horizontales(
+            top_productos, 412, ",.2f", "Ingresos", info_extra=categoria_producto,
+            sufijo=SUFIJO_MONEDA,
+        ))
 
 # ---------------------------------------------------------------------------
 # Conclusiones (se recalculan con los filtros)

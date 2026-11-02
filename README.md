@@ -90,7 +90,7 @@ El dashboard **reutiliza** las funciones de `src/calculos.py`: los filtros se ap
 - **Conclusiones automáticas:** categoría y región líderes, mes con mayor facturación y variación del ingreso diario medio entre el primer y el último mes (comparar la media diaria evita penalizar a un mes incompleto).
 - **Tabla** con las transacciones filtradas.
 
-El diseño es responsive: en móvil los bloques se apilan en una sola columna.
+El diseño es responsive: en móvil los bloques se apilan en una sola columna. Un interruptor en la cabecera activa el **modo oscuro**, que adapta también los gráficos y la tabla.
 
 ## Limitaciones
 

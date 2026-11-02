@@ -14,6 +14,18 @@ TEXTO_SECUNDARIO = "#52514e"
 TEXTO_APAGADO = "#898781"
 REJILLA = "#e1e0d9"
 EJE = "#c3c2b7"
+
+# Paleta del modo oscuro (mismos papeles que la clara, con más luminosidad en el azul)
+OSCURO = {
+    "azul": "#4f93ec",
+    "azul_suave": "rgba(79, 147, 236, 0.16)",
+    "fondo": "#1c1f24",
+    "texto": "#ececea",
+    "texto_secundario": "#b9b8b3",
+    "texto_apagado": "#8f8e89",
+    "rejilla": "#2e3138",
+    "eje": "#454a52",
+}
 FUENTE = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
 
 # Símbolo de moneda de los importes (solo presentación: los valores no se convierten).
@@ -166,4 +178,32 @@ def grafico_evolucion_mensual(ingresos, dias, mes_incompleto=None, alto=360):
             text=f"{dias[mes_incompleto]} días", showarrow=False,
             yshift=12, font=dict(color=TEXTO_APAGADO, size=11),
         )
+    return fig
+
+
+def aplicar_modo_oscuro(fig):
+    """Recolorea una figura ya creada con la paleta oscura (los datos no cambian)."""
+    c = OSCURO
+    fig.update_layout(
+        font_color=c["texto_secundario"],
+        hoverlabel=dict(bgcolor=c["fondo"], bordercolor=c["rejilla"], font_color=c["texto"]),
+    )
+    fig.update_xaxes(gridcolor=c["rejilla"], zerolinecolor=c["eje"], linecolor=c["eje"],
+                     spikecolor=c["eje"], tickfont_color=c["texto_apagado"])
+    fig.update_yaxes(gridcolor=c["rejilla"], zerolinecolor=c["eje"], linecolor=c["eje"],
+                     tickfont_color=c["texto_apagado"])
+    for traza in fig.data:
+        if traza.type == "bar":
+            traza.marker.color = c["azul"]
+            traza.textfont.color = c["texto_secundario"]
+            # En las barras, el eje vertical lleva los nombres: van con el texto principal
+            fig.update_yaxes(tickfont_color=c["texto"])
+        else:
+            traza.line.color = c["azul"]
+            traza.marker.color = c["azul"]
+            traza.marker.line.color = c["fondo"]
+            traza.fillcolor = c["azul_suave"]
+    for anotacion in fig.layout.annotations:
+        es_maximo = anotacion.text.startswith("Máximo")
+        anotacion.font.color = c["texto"] if es_maximo else c["texto_apagado"]
     return fig
