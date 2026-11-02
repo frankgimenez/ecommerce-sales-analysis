@@ -16,7 +16,7 @@ Dashboard interactivo en **Python + Pandas + Streamlit** para explorar las venta
 
 > **Proyecto demostrativo.** El dataset es público y parece **sintético**: las cifras no representan ventas reales de ninguna empresa (ver [Limitaciones](#limitaciones)).
 
-[![Vista general del dashboard](assets/dashboard.png)](https://franciss009.github.io/ecommerce-sales-analysis/)
+[![Vista general del dashboard en modo oscuro](assets/dashboard-oscuro.png)](https://franciss009.github.io/ecommerce-sales-analysis/)
 
 ---
 
