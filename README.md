@@ -3,20 +3,20 @@
 Dashboard interactivo en **Python + Pandas + Streamlit** para explorar las ventas de un marketplace online: indicadores principales, evolución mensual, ventas por región, categoría y producto, y conclusiones que se recalculan con los filtros.
 
 <p align="center">
-  <a href="https://ecommerce-sales-analysis.streamlit.app">
-    <img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg" alt="Abrir el dashboard en Streamlit" height="52">
+  <a href="https://franciss009.github.io/ecommerce-sales-analysis/">
+    <img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg" alt="Abrir el dashboard" height="52">
   </a>
 </p>
 
 <h2 align="center">
-  👉 <a href="https://ecommerce-sales-analysis.streamlit.app">Ver el dashboard en vivo</a>
+  👉 <a href="https://franciss009.github.io/ecommerce-sales-analysis/">Ver el dashboard en vivo</a>
 </h2>
 
-<p align="center"><sub>Se abre en el navegador, sin instalar nada. Si la app lleva días sin visitas, tarda unos segundos en arrancar.</sub></p>
+<p align="center"><sub>Se abre en el navegador, sin instalar nada. La primera carga tarda unos 30 segundos: Python se ejecuta dentro de tu navegador.</sub></p>
 
 > **Proyecto demostrativo.** El dataset es público y parece **sintético**: las cifras no representan ventas reales de ninguna empresa (ver [Limitaciones](#limitaciones)).
 
-[![Vista general del dashboard](assets/dashboard.png)](https://ecommerce-sales-analysis.streamlit.app)
+[![Vista general del dashboard](assets/dashboard.png)](https://franciss009.github.io/ecommerce-sales-analysis/)
 
 ---
 
@@ -49,12 +49,14 @@ Columnas: `Transaction ID`, `Date`, `Product Category`, `Product Name`, `Units S
 - **Pandas** — lectura, limpieza, agregaciones y fechas.
 - **Streamlit** — interfaz web del dashboard y filtros.
 - **Plotly** — gráficos interactivos con tooltips.
+- **stlite + GitHub Pages** — versión web: ejecuta la misma app de Streamlit en el navegador (Pyodide), sin servidor.
 
 ## Estructura del proyecto
 
 ```text
 ecommerce-sales-analysis/
 ├── app.py                  # Dashboard de Streamlit (punto de entrada)
+├── index.html              # Versión web (stlite): carga app.py en el navegador
 ├── src/
 │   ├── lectura.py          # leer_csv(): carga el CSV con control de errores
 │   ├── limpieza.py         # Revisión de calidad y generación del CSV limpio

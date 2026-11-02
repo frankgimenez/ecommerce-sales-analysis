@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Ventas del marketplace 2024 · Dashboard</title>
+  <!-- Versión web del dashboard: stlite ejecuta Streamlit en el navegador (Pyodide),
+       sin servidor. Usa los mismos archivos del repositorio que la versión local. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/browser@1.12.0/build/stlite.css" />
+  <style>
+    body { margin: 0; background: #f9f9f7; }
+    #carga {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: #52514e; text-align: center; padding: 4rem 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <p id="carga">Cargando el dashboard… la primera vez puede tardar unos segundos.</p>
+  </div>
+  <script type="module">
+    import { mount } from "https://cdn.jsdelivr.net/npm/@stlite/browser@1.12.0/build/stlite.js";
+
+    const archivos = [
+      "app.py",
+      "src/lectura.py",
+      "src/calculos.py",
+      "src/graficos.py",
+      "data/online_sales_clean.csv",
+      ".streamlit/config.toml",
+    ];
+
+    mount(
+      {
+        requirements: ["pandas", "plotly"],
+        entrypoint: "app.py",
+        files: Object.fromEntries(archivos.map((ruta) => [ruta, { url: ruta }])),
+      },
+      document.getElementById("root"),
+    );
+  </script>
+</body>
+</html>
