@@ -92,8 +92,6 @@ El dashboard **reutiliza** las funciones de `src/calculos.py`: los filtros se ap
 
 El diseño es responsive: en móvil los bloques se apilan en una sola columna.
 
-<img src="assets/dashboard-movil.png" alt="Dashboard en móvil" width="260">
-
 ## Limitaciones
 
 - **Datos sintéticos.** Hay exactamente una transacción por día y cada categoría se vende en una única región. Son patrones típicos de datos generados, no de un marketplace real.
